@@ -1,0 +1,12 @@
+
+obj/
+planificador
+planificador.exe
+
+
+*.gpi
+
+
+html/
+latex/
+Doxyfile
