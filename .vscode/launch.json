@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Depurar el simulador",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/planificador",
+            "args": ["test/caso_1_rr.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "preLaunchTask": "Construir",
+            "setupCommands": [
+                {
+                    "description": "Presentacion legible de los contenedores estandar",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

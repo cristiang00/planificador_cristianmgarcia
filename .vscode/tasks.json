@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Construir",
+            "type": "shell",
+            "command": "make",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compila el simulador con make"
+        },
+        {
+            "label": "Limpiar",
+            "type": "shell",
+            "command": "make clean",
+            "problemMatcher": [],
+            "detail": "Borra los objetos, el ejecutable y las graficas"
+        },
+        {
+            "label": "Ejecutar caso de prueba",
+            "type": "shell",
+            "command": "./planificador test/caso_1_rr.txt",
+            "dependsOn": "Construir",
+            "problemMatcher": [],
+            "detail": "Construye y ejecuta un caso de ejemplo"
+        }
+    ]
+}

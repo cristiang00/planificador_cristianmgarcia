@@ -1,0 +1,8 @@
+define queues 1
+define scheduling 1 srt
+define quantum 1 2
+process P1 0 7
+process P2 2 4
+process P3 4 1
+process P4 5 4
+start

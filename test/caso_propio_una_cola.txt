@@ -1,0 +1,17 @@
+# Mismo caso propio, pero con los 6 procesos en una sola cola FIFO, para
+# comparar contra caso_propio_colas.txt y mostrar el efecto de repartir en
+# colas de prioridad. El quantum es mayor que cualquier rafaga para que cada
+# proceso corra de un solo tramo, como corresponde a FIFO sin colas
+# adicionales que lo interrumpan.
+define queues 1
+define scheduling 1 fifo
+define quantum 1 100
+
+process P1 0 5 1
+process P2 1 3 1
+process P3 0 6 1
+process P4 3 2 1
+process P5 0 4 1
+process P6 2 3 1
+
+start

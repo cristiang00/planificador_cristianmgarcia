@@ -1,0 +1,27 @@
+# Caso propio (punto 5): tres colas de prioridad, cada una con un algoritmo
+# distinto, para comparar contra el reparto de los mismos procesos en una
+# sola cola (ver caso_propio_una_cola.txt).
+#
+# Cola 1 (la de mayor prioridad): RR con quantum 3, para ver la alternancia
+# tipica de Round Robin entre P1 y P2.
+# Cola 2: SJF, con quantum 10 (mayor que cualquier rafaga) para que, dentro
+# de su propio turno, el proceso corra sin interrupciones de su misma cola,
+# que es lo que corresponde a un algoritmo sin expropiacion.
+# Cola 3 (la de menor prioridad): FIFO, tambien con quantum 10 por la misma
+# razon. Casi no alcanza a ejecutar mientras las colas 1 y 2 tengan listos.
+define queues 3
+define scheduling 1 rr
+define scheduling 2 sjf
+define scheduling 3 fifo
+define quantum 1 3
+define quantum 2 10
+define quantum 3 10
+
+process P1 0 5 1
+process P2 1 3 1
+process P3 0 6 2
+process P4 3 2 2
+process P5 0 4 3
+process P6 2 3 3
+
+start
