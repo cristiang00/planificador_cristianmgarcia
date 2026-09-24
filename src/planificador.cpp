@@ -192,20 +192,30 @@ Resultado planificar(std::vector<Proceso> &procesos, std::vector<Cola_prioridad>
         // lo que le restaria al proceso actual en ese instante. El restante
         // del actual en el instante de esa llegada es su restante de ahora
         // menos lo que ya habria ejecutado hasta esa llegada.
+        //
+        // Una llegada que coincide exactamente con el fin del turno (>=, no
+        // solo >) no cuenta como expropiacion: ahi el turno ya terminaba por
+        // su cuenta, asi que corresponde el manejo normal (avanzar de cola),
+        // y el orden entre ese proceso y el actual, si vuelven a coincidir,
+        // lo decide la insercion ordenada de siempre.
         if (cola.estrategia == Estrategia::SRT) {
             for (const Proceso *llega : cola.llegada) {
                 if (llega->llegada <= ahora) {
                     continue;
                 }
-                if (llega->llegada > ahora + quantum_asignado) {
+                if (llega->llegada >= ahora + quantum_asignado) {
                     break;
                 }
                 const int restante_al_llegar = actual->restante - (llega->llegada - ahora);
                 if (llega->ejecucion < restante_al_llegar) {
                     // Se corta el turno en el instante de esa llegada: no se
-                    // agota el quantum ni se pasa a la siguiente cola.
+                    // agota el quantum ni se pasa a la siguiente cola. El
+                    // quantum de la cola se descuenta en lo ya consumido, de
+                    // modo que el proceso que entra solo recibe lo que
+                    // quedaba del turno, no uno nuevo completo.
                     quantum_asignado = llega->llegada - ahora;
                     cambiar_de_cola = false;
+                    quantum -= quantum_asignado;
                     break;
                 }
             }

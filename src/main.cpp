@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief Simulador de planificacion de procesos.
- * @author Erwin Meza Vega <emezav@unicauca.edu.co>
+ * @author Erwin Meza Vega <emezav@unicauca.edu.co> - <cristianmgarcia@unicauca.edu.co>
  * @copyright MIT License
  *
  * Lee la configuracion de la simulacion por un archivo o por la entrada
