@@ -8,7 +8,7 @@
 # de su propio turno, el proceso corra sin interrupciones de su misma cola,
 # que es lo que corresponde a un algoritmo sin expropiacion.
 # Cola 3 (la de menor prioridad): FIFO, tambien con quantum 10 por la misma
-# razon. Casi no alcanza a ejecutar mientras las colas 1 y 2 tengan listos.
+# razon. Recibe un turno por vuelta, igual que las otras dos colas.
 define queues 3
 define scheduling 1 rr
 define scheduling 2 sjf

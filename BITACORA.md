@@ -170,9 +170,15 @@ alternancia típica de Round Robin, con P1 repartido en varios tramos de 2.
 
 #### SRT (quantum 2) — espera promedio 3.000
 
-`P1 (2) P2 (2) P3 (1) P2 (2) P4 (2) P4 (2) P1 (2) P1 (2) P1 (1)`. Aquí sí se
-ve la expropiación: P1 arranca, pero en cuanto llega P2 con una ráfaga menor
-que lo que le resta a P1, P1 suelta la CPU antes de agotar su quantum.
+`P1 (2) P2 (2) P3 (1) P2 (2) P4 (2) P4 (2) P1 (2) P1 (2) P1 (1)`. En este
+caso todas las llegadas coinciden con el final de un quantum, así que ningún
+turno se corta a la mitad: lo que baja la espera es que, en cada límite de
+quantum, la cola se reordena por tiempo restante. En t=2 pasa P2 (4) delante
+de P1 (5), en t=4 pasa P3 (1) delante de P2 (2) y en t=7 pasa P4 (4) delante
+de P1 (5). La expropiación a mitad de quantum se ve en `test/caso_1_srt.txt`:
+`D (1) E (1) C (1) C (1) E (2) ...`. E arranca en t=1 con un quantum de 2,
+pero en t=2 llega C con ráfaga 2, menor que los 7 que le restan a E, así que
+E se corta tras 1 unidad y C recibe solo la unidad de quantum que sobraba.
 
 ![Diagrama de Gantt de SRT](test/taller_srt.png)
 
@@ -200,10 +206,12 @@ procesos, con los mismos instantes de llegada y las mismas ráfagas, pero
 todos en una sola cola FIFO. El promedio ahí sube a **10.667**.
 
 La clave para entender la diferencia es que el simulador reparte la CPU entre
-colas de forma **circular**: cada cola recibe su turno por rotación, tenga o
-no procesos esperando las colas de mayor prioridad. Lo que cambia con la
-prioridad no es *si* una cola se ejecuta, sino cuánto tiempo pasa entre un
-turno suyo y el siguiente — y eso es justo lo que produce un resultado
+colas de forma **circular**: cada cola recibe un turno por vuelta, tenga o no
+procesos esperando las colas anteriores. La secuencia lo muestra: P1 (cola 1),
+P4 (cola 2), P5 (cola 3), P2 (cola 1), P3 (cola 2), P6 (cola 3), P1 (cola 1),
+es decir, turnos de las colas 1, 2, 3, 1, 2, 3, 1. El número de la cola solo
+fija el orden dentro de cada vuelta; lo que distingue a una cola de otra es su
+algoritmo y la duración de su quantum. Eso es lo que produce un resultado
 distinto al de una sola cola:
 
 - P1 usa su primer turno de 3 unidades (t=0–3) y luego el turno pasa a las
@@ -234,35 +242,9 @@ esa cola.
 
 ![Diagrama de Gantt del caso propio en una sola cola](test/caso_propio_una_cola.png)
 
-## 5. Errores frecuentes que revisamos para no cometer
 
-- No tocamos nada fuera de los cuatro puntos marcados; la lectura de
-  configuración, la contabilidad de tiempos y el diagrama de Gantt se dejaron
-  tal cual venían.
-- Verificamos que tiempo de espera y tiempo de retorno no se confundieran:
-  `espera` es lo que el proceso pasa listo sin CPU, y no se le suma nunca al
-  proceso que en ese instante tiene el procesador (`sumar_espera` lo excluye
-  explícitamente con `&p != actual`).
-- En RR confirmamos con el caso del taller que el proceso interrumpido
-  vuelve al **final** de la cola, no al frente.
-- En la inserción ordenada probamos a propósito procesos con el mismo
-  restante para confirmar que el que ya estaba en la cola no pierde su lugar.
-- Confirmamos que la cola 1 es la de mayor prioridad (y no al revés)
-  revisando el orden en que `preparar()` recorre las colas y el orden en que
-  `caso_propio_colas.txt` numera sus colas de `define scheduling`.
-- Tuvimos cuidado de no confundir prioridad con exclusividad: una cola de
-  mayor prioridad recibe turnos más seguido, pero el reparto entre colas es
-  circular, así que una cola de menor prioridad también avanza aunque las de
-  arriba todavía tengan procesos listos.
-- En SRT no bastaba con cortar el turno del proceso expropiado: había que
-  descontarle al presupuesto de la cola (`quantum`) el tiempo ya consumido,
-  como dice el enunciado, para que el proceso que entra no reciba un quantum
-  nuevo completo.
-- Revisamos los diagramas de Gantt, no solo los promedios, para los cuatro
-  algoritmos del taller y para el caso propio, porque dos planificaciones
-  distintas pueden dar el mismo promedio y solo la secuencia lo delata.
 
-## 6. Compilación
+## 5. Compilación
 
 `make` compila sin advertencias con `-Wall -Wextra`:
 
